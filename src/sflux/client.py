@@ -98,14 +98,24 @@ class _Query:
         return f'|> pivot(rowKey: {rows}, columnKey: {columns}, valueColumn: "{value}")'
 
     @add_to_query
-    def group(self, columns: (str, list, tuple), mode: str = 'by'):
+    def group(self, columns: (str, list, tuple) = None, mode: str = None):
         """
         Implements the GROUP function from FluxQL
         """
-        if isinstance(columns, str):
-            columns = [columns]
-        columns = json.dumps(columns)
-        return f'|> group(columns: {columns}, mode: "{mode}")'
+        if columns is not None:
+            if isinstance(columns, str):
+                columns = [columns]
+            columns = json.dumps(columns)
+            column_component = f'columns: {columns}'
+        else:
+            column_component = ''
+
+        if mode is not None:
+            mode_component = f', mode: "{mode}"'
+        else:
+            mode_component = ''
+
+        return f'|> group({column_component}{mode_component})'
 
     @add_to_query
     def sort(self, columns: (str, list, tuple), desc: bool = False):
