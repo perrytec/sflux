@@ -141,6 +141,13 @@ class _Query:
         """
         return '|> last()'
 
+    @add_to_query
+    def drop(self, columns: list):
+        """
+        Implements the DROP function from FluxQL
+        """
+        return f'|> drop(columns: {columns})'
+
     #######################################
     # Execution methods
     #######################################
