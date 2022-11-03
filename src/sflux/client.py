@@ -148,6 +148,27 @@ class _Query:
         """
         return f'|> drop(columns: {columns})'
 
+    @add_to_query
+    def mean(self, column: str = '_value'):
+        """
+        Implements the MEAN function from FluxQL
+        """
+        return f'|> mean(column: "{column}")'
+
+    @add_to_query
+    def std(self, column: str = '_value', mode: str = 'sample'):
+        """
+        Implements the MEAN function from FluxQL
+        """
+        return f'|> stddev(column: "{column}", mode: "{mode}")'
+
+    @add_to_query
+    def count(self, column: str = '_value'):
+        """
+        Implements the MEAN function from FluxQL
+        """
+        return f'|> count(column: "{column}")'
+
     #######################################
     # Execution methods
     #######################################
