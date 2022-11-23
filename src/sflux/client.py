@@ -169,6 +169,18 @@ class _Query:
         """
         return f'|> count(column: "{column}")'
 
+    @add_to_query
+    def map(self, operations: dict, keep_original: bool = True):
+        """
+        Implements the MAP function from FluxQL
+        :param operations: Dictionary of operations. Each key is the name of the new column and the item is a operation
+                           of ROW objects. Example: {column: ROW('first') + ROW('second')}
+        :param keep_original: True if the original columns need to be kept, False otherwise
+        """
+        starter = ' r with ' if keep_original else ''
+        components = ', '.join([f'{key}: {operations[key]}' for key in operations])
+        return '|> map(fn: (r) => ({ %s %s }))' % (starter, components)
+
     #######################################
     # Execution methods
     #######################################
