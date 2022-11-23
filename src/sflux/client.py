@@ -3,7 +3,12 @@ import logging
 import datetime
 
 from influxdb_client import InfluxDBClient
+from influxdb_client.client.flux_table import TableList
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 logger = logging.getLogger('sflux')
 
@@ -27,7 +32,7 @@ def add_to_query(func):
     """
     Decorator to return a new _Query object out of the original query
     """
-    def inner(self, *args, **kwargs):
+    def inner(self, *args, **kwargs) -> _Query:
         query_addition = func(self, *args, **kwargs)
         if isinstance(query_addition, str):
             query_addition = [query_addition]
@@ -48,14 +53,14 @@ class _Query:
         self._client = client
 
     @classmethod
-    def new(cls, client: InfluxDBClient, bucket: str):
+    def new(cls, client: InfluxDBClient, bucket: str) -> "_Query":
         return cls(components=[f'from(bucket: "{bucket}")'], client=client)
 
     #######################################
     # Query methods
     #######################################
     @add_to_query
-    def range(self, start: (int, str, datetime.datetime), stop: (int, str, datetime.datetime) = None):
+    def range(self, start: (int, str, datetime.datetime), stop: (int, str, datetime.datetime) = None) -> str:
         """
         Adds a specified timerange to the current query. This range can be either relative or absolute, which will
         depend on the start argument datatype.
@@ -69,7 +74,7 @@ class _Query:
         return f'|> range(start: {v_start}, stop: {v_stop})'
 
     @add_to_query
-    def filter(self, condition: str):
+    def filter(self, condition: str) -> str:
         """
         Implements the filter function from FluxQL
 
@@ -82,7 +87,7 @@ class _Query:
     def pivot(self,
               rows: (str, list, tuple) = '_time',
               columns: (str, list, tuple) = '_field',
-              value: str = '_value'):
+              value: str = '_value') -> str:
         """
         Implements the PIVOT function from FluxQL
         :param rows: Rows to pivot by
@@ -98,7 +103,7 @@ class _Query:
         return f'|> pivot(rowKey: {rows}, columnKey: {columns}, valueColumn: "{value}")'
 
     @add_to_query
-    def group(self, columns: (str, list, tuple) = None, mode: str = None):
+    def group(self, columns: (str, list, tuple) = None, mode: str = None) -> str:
         """
         Implements the GROUP function from FluxQL
         """
@@ -118,7 +123,7 @@ class _Query:
         return f'|> group({column_component}{mode_component})'
 
     @add_to_query
-    def sort(self, columns: (str, list, tuple), desc: bool = False):
+    def sort(self, columns: (str, list, tuple), desc: bool = False) -> str:
         """
         Implements the SORT function from FluxQl
         """
@@ -128,49 +133,49 @@ class _Query:
         return f'|> group(columns: {columns}, desc: "{desc}")'
 
     @add_to_query
-    def limit(self, n: int = 10, offset: int = 0):
+    def limit(self, n: int = 10, offset: int = 0) -> str:
         """
         Implements the LIMIT function from FluxQL
         """
         return f'|> limit(n: {n}, offset: {offset})'
 
     @add_to_query
-    def last(self):
+    def last(self) -> str:
         """
         Implements the LAST function from FluxQL
         """
         return '|> last()'
 
     @add_to_query
-    def drop(self, columns: list):
+    def drop(self, columns: list) -> str:
         """
         Implements the DROP function from FluxQL
         """
         return f'|> drop(columns: {columns})'
 
     @add_to_query
-    def mean(self, column: str = '_value'):
+    def mean(self, column: str = '_value') -> str:
         """
         Implements the MEAN function from FluxQL
         """
         return f'|> mean(column: "{column}")'
 
     @add_to_query
-    def std(self, column: str = '_value', mode: str = 'sample'):
+    def std(self, column: str = '_value', mode: str = 'sample') -> str:
         """
         Implements the MEAN function from FluxQL
         """
         return f'|> stddev(column: "{column}", mode: "{mode}")'
 
     @add_to_query
-    def count(self, column: str = '_value'):
+    def count(self, column: str = '_value') -> str:
         """
         Implements the MEAN function from FluxQL
         """
         return f'|> count(column: "{column}")'
 
     @add_to_query
-    def map(self, operations: dict, keep_original: bool = True):
+    def map(self, operations: dict, keep_original: bool = True) -> str:
         """
         Implements the MAP function from FluxQL
         :param operations: Dictionary of operations. Each key is the name of the new column and the item is a operation
@@ -184,7 +189,7 @@ class _Query:
     #######################################
     # Execution methods
     #######################################
-    def all(self):
+    def all(self) -> TableList:
         """
         Returns the results of the query as a list of influx tables. Each table has records that contain the values.
 
@@ -195,13 +200,13 @@ class _Query:
         """
         return self._client.query_api().query('\n'.join(self._components))
 
-    def to_dataframe(self):
+    def to_dataframe(self) -> "pd.DataFrame":
         """
         Returns the results of the query in a list of pandas dataframes
         """
         return self._client.query_api().query_data_frame('\n'.join(self._components))
 
-    def to_dict(self):
+    def to_dict(self) -> list:
         """
         Returns the results as a 2 dimensional list of dictionaries, where the first dimension represents the tables
         and the seconds the records of each table.
