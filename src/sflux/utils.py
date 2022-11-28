@@ -4,25 +4,31 @@ class ROW:
         self.column = column
 
     def __eq__(self, other: str):
-        return f'{self} == "{other}"'
+        return f'{self} == {self._parse_other(other)}'
 
     def __ne__(self, other):
-        return f'{self} != "{other}"'
+        return f'{self} != {self._parse_other(other)}'
 
     def __ge__(self, other):
-        return f'{self} >= "{other}"'
+        return f'{self} >= {self._parse_other(other)}'
 
     def __gt__(self, other):
-        return f'{self} > "{other}"'
+        return f'{self} > {self._parse_other(other)}'
 
     def __le__(self, other):
-        return f'{self} <= "{other}"'
+        return f'{self} <= {self._parse_other(other)}'
 
     def __lt__(self, other):
-        return f'{self} < "{other}"'
+        return f'{self} < {self._parse_other(other)}'
 
     def __repr__(self):
         return f'r["{self.column}"]'
+
+    @staticmethod
+    def _parse_other(other):
+        if isinstance(other, str):
+            return f'"{other}"'
+        return other
 
     # MATH
 
