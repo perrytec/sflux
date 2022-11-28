@@ -32,7 +32,7 @@ def add_to_query(func):
     """
     Decorator to return a new _Query object out of the original query
     """
-    def inner(self, *args, **kwargs) -> _Query:
+    def inner(self, *args, **kwargs) -> "_Query":
         query_addition = func(self, *args, **kwargs)
         if isinstance(query_addition, str):
             query_addition = [query_addition]
