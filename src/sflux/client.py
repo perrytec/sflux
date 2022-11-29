@@ -27,6 +27,13 @@ class Client(InfluxDBClient):
         """
         return _Query.new(self, bucket)
 
+    def insert(self, measurements: (list, tuple)):
+        """
+        Inserts a list of measurement objects to influx
+        :param measurements: List of MEASUREMENT objects
+        """
+        pass
+
 
 def add_to_query(func):
     """
