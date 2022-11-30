@@ -24,6 +24,9 @@ class ROW:
     def in_(self, iterable: (list, tuple)):
         return f'contains(value: {self}, set: {self._parse_other(iterable)})'
 
+    def not_in_(self, iterable: (list, tuple)):
+        return f'not contains(value: {self}, set: {self._parse_other(iterable)})'
+
     def __repr__(self):
         return f'r["{self.column}"]'
 
