@@ -22,16 +22,17 @@ class ROW:
         return f'{self} < {self._parse_other(other)}'
 
     def in_(self, iterable: (list, tuple)):
-        return f'contains(value: {self}, set: {list(iterable)})'
+        return f'contains(value: {self}, set: {self._parse_other(iterable)})'
 
     def __repr__(self):
         return f'r["{self.column}"]'
 
-    @staticmethod
-    def _parse_other(other):
+    def _parse_other(self, other):
+        if isinstance(other, (list, tuple)):
+            return '[' + ','.join([self._parse_other(elem) for elem in other]) + ']'
         if isinstance(other, str):
             return f'"{other}"'
-        return other
+        return str(other)
 
     # MATH
 
