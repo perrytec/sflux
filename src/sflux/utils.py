@@ -27,6 +27,10 @@ class ROW:
     def not_in_(self, iterable: (list, tuple)):
         return f'not contains(value: {self}, set: {self._parse_other(iterable)})'
 
+    def exists(self):
+        """Implements `exists` from FluxQL"""
+        return f'exists {self}'
+
     def __repr__(self):
         return f'r["{self.column}"]'
 
