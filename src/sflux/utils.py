@@ -21,6 +21,9 @@ class ROW:
     def __lt__(self, other):
         return f'{self} < {self._parse_other(other)}'
 
+    def in_(self, iterable: (list, tuple)):
+        return f'contains(value: {self}, set: {list(iterable)})'
+
     def __repr__(self):
         return f'r["{self.column}"]'
 
