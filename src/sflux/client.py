@@ -217,7 +217,7 @@ class _Query:
 
     def to_dict(self) -> list:
         """
-        Returns the results as a list of dictionaries
+        Returns the results as a pandas friendly list of dictionaries
         """
         results = self.all()
         output = []
