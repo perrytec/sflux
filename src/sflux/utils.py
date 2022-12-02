@@ -19,13 +19,13 @@ class ROW:
         return f'{self} <= {self._parse_other(other)}'
 
     def __lt__(self, other):
-        return f'{self} < {self._parse_other(other)}'
+        return f'{self} < {parse_to_string(other)}'
 
     def in_(self, iterable: (list, tuple)):
-        return f'contains(value: {self}, set: {self._parse_other(iterable)})'
+        return f'contains(value: {self}, set: {parse_to_string(iterable)})'
 
     def not_in_(self, iterable: (list, tuple)):
-        return f'not contains(value: {self}, set: {self._parse_other(iterable)})'
+        return f'not contains(value: {self}, set: {parse_to_string(iterable)})'
 
     def exists(self):
         """Implements `exists` from FluxQL"""
@@ -33,13 +33,6 @@ class ROW:
 
     def __repr__(self):
         return f'r["{self.column}"]'
-
-    def _parse_other(self, other):
-        if isinstance(other, (list, tuple)):
-            return '[' + ','.join([self._parse_other(elem) for elem in other]) + ']'
-        if isinstance(other, str):
-            return f'"{other}"'
-        return str(other)
 
     # MATH
 
@@ -85,3 +78,11 @@ def _and(*args):
     `and` logical operator for filters
     """
     return '(' + ' and '.join(args) + ')'
+
+
+def parse_to_string(other):
+    if isinstance(other, (list, tuple)):
+        return '[' + ','.join([parse_to_string(elem) for elem in other]) + ']'
+    if isinstance(other, str):
+        return f'"{other}"'
+    return str(other)

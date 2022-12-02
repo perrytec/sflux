@@ -5,6 +5,8 @@ import datetime
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.flux_table import TableList
 
+from sflux.utils import parse_to_string
+
 try:
     import pandas as pd
 except ImportError:
@@ -158,7 +160,7 @@ class _Query:
         """
         Implements the DROP function from FluxQL
         """
-        return f'|> drop(columns: {columns})'
+        return f'|> drop(columns: {parse_to_string(columns)})'
 
     @add_to_query
     def mean(self, column: str = '_value') -> str:
