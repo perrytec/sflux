@@ -69,14 +69,14 @@ class _RowOp(ROW):
         return self.column
 
 
-def _or(*args):
+def or_(*args):
     """
     `or` logical operator for filters
     """
     return '(' + ' or '.join(args) + ')'
 
 
-def _and(*args):
+def and_(*args):
     """
     `and` logical operator for filters
     """
