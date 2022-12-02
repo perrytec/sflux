@@ -107,9 +107,7 @@ class _Query:
             rows = [rows]
         if isinstance(columns, str):
             columns = [columns]
-        rows = json.dumps(rows)
-        columns = json.dumps(columns)
-        return f'|> pivot(rowKey: {rows}, columnKey: {columns}, valueColumn: "{value}")'
+        return f'|> pivot(rowKey: {parse_to_string(rows)}, columnKey: {parse_to_string(columns)}, valueColumn: "{value}")'
 
     @add_to_query
     def group(self, columns: (str, list, tuple) = None, mode: str = None) -> str:
@@ -119,8 +117,7 @@ class _Query:
         if columns is not None:
             if isinstance(columns, str):
                 columns = [columns]
-            columns = json.dumps(columns)
-            column_component = f'columns: {columns}'
+            column_component = f'columns: {parse_to_string(columns)}'
         else:
             column_component = ''
 
@@ -138,8 +135,7 @@ class _Query:
         """
         if isinstance(columns, str):
             columns = [columns]
-        columns = json.dumps(columns)
-        return f'|> group(columns: {columns}, desc: "{desc}")'
+        return f'|> sort(columns: {parse_to_string(columns)}, desc: {parse_to_string(desc)})'
 
     @add_to_query
     def limit(self, n: int = 10, offset: int = 0) -> str:

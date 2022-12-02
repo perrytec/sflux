@@ -1,3 +1,5 @@
+import json
+
 class ROW:
     """"""
     def __init__(self, column: str):
@@ -81,8 +83,4 @@ def _and(*args):
 
 
 def parse_to_string(other):
-    if isinstance(other, (list, tuple)):
-        return '[' + ','.join([parse_to_string(elem) for elem in other]) + ']'
-    if isinstance(other, str):
-        return f'"{other}"'
-    return str(other)
+    return json.dumps(other)
