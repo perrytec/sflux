@@ -3,9 +3,11 @@ import logging
 import datetime
 
 from influxdb_client import InfluxDBClient
+from influxdb_client.client.write_api import SYNCHRONOUS
 from influxdb_client.client.flux_table import TableList
 
 from sflux.utils import parse_to_string
+from sflux.measurement import Measurement
 
 try:
     import pandas as pd
@@ -30,12 +32,36 @@ class Client(InfluxDBClient):
         """
         return _Query.new(self, bucket, measurement)
 
-    def insert(self, measurements: (list, tuple)):
+    def insert(self, bucket: str, measurements: (list, tuple), write_mode: str = 'SYNCHRONOUS'):
         """
         Inserts a list of measurement objects to influx
+        :param bucket:       Bucket where the measurements will be inserted
         :param measurements: List of MEASUREMENT objects
+        :param write_mode:   Can either be SYNCHRONOUS or ASYNCHRONOUS as defined in influxdb_client
         """
+        if isinstance(measurements, Measurement):
+            measurements = [measurements]
+        if write_mode == 'SYNCHRONOUS':
+            options = {'write_options': SYNCHRONOUS}
+        else:
+            options = {'success_callback': self.on_write_success,
+                       'error_callback': self.on_write_error,
+                       'retry_callback': self.on_write_retry}
+
+        with self.write_api(**options) as write_api:
+            write_api.write(bucket=bucket, org=self.org, record='\n'.join(str(elem) for elem in measurements))
+
+    def on_write_success(self, conf: (str, str, str), data: str):
         pass
+
+    def on_write_error(self, conf: (str, str, str), data: str, exception: Exception):
+        pass
+
+    def on_write_retry(self, conf: (str, str, str), data: str, exception: Exception):
+        pass
+
+    def check_health(self):
+        return self.ping()
 
 
 def add_to_query(func):

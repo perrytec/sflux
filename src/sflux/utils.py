@@ -1,5 +1,6 @@
 import json
 
+
 class ROW:
     """"""
     def __init__(self, column: str):
