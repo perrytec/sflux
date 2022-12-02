@@ -24,13 +24,12 @@ class Client(InfluxDBClient):
         self.token = token
         self.org = org
 
-    def query(self, bucket: str, measurement: str = None):
+    def query(self, bucket: str):
         """
         Equivalent to the FROM statement in FluxQL
         :param bucket:      Name of the bucket to be queried
-        :param measurement: Optional name of the measurement to be queried
         """
-        return _Query.new(self, bucket, measurement)
+        return _Query.new(self, bucket)
 
     def insert(self, bucket: str, measurements: (list, tuple), write_mode: str = 'SYNCHRONOUS'):
         """
@@ -89,10 +88,8 @@ class _Query:
         self._client = client
 
     @classmethod
-    def new(cls, client: InfluxDBClient, bucket: str, measurement: str = None) -> "_Query":
+    def new(cls, client: InfluxDBClient, bucket: str) -> "_Query":
         comps = [f'from(bucket: "{bucket}")']
-        if measurement is not None:
-            comps.append(f'|> filter(fn: (r) => r["_measurement"] == "{measurement}")')
         return cls(components=comps, client=client)
 
     #######################################
