@@ -4,19 +4,19 @@ class ROW:
         self.column = column
 
     def __eq__(self, other: str):
-        return f'{self} == {self._parse_other(other)}'
+        return f'{self} == {parse_to_string(other)}'
 
     def __ne__(self, other):
-        return f'{self} != {self._parse_other(other)}'
+        return f'{self} != {parse_to_string(other)}'
 
     def __ge__(self, other):
-        return f'{self} >= {self._parse_other(other)}'
+        return f'{self} >= {parse_to_string(other)}'
 
     def __gt__(self, other):
-        return f'{self} > {self._parse_other(other)}'
+        return f'{self} > {parse_to_string(other)}'
 
     def __le__(self, other):
-        return f'{self} <= {self._parse_other(other)}'
+        return f'{self} <= {parse_to_string(other)}'
 
     def __lt__(self, other):
         return f'{self} < {parse_to_string(other)}'
