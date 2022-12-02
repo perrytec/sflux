@@ -217,17 +217,14 @@ class _Query:
 
     def to_dict(self) -> list:
         """
-        Returns the results as a 2 dimensional list of dictionaries, where the first dimension represents the tables
-        and the seconds the records of each table.
+        Returns the results as a list of dictionaries
         """
         results = self.all()
-        tables = []
+        output = []
         for table in results:
-            records = []
             for record in table.records:
-                records.append(record.values)
-            tables.append(records)
-        return tables
+                output.append(record.values)
+        return output
 
     #######################################
     # Helper methods
