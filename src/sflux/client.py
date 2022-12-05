@@ -31,7 +31,7 @@ class Client(InfluxDBClient):
         """
         return _Query.new(self, bucket)
 
-    def insert(self, bucket: str, measurements: (list, tuple), write_mode: str = 'SYNCHRONOUS'):
+    def write(self, bucket: str, measurements: (list, tuple), write_mode: str = 'SYNCHRONOUS'):
         """
         Inserts a list of measurement objects to influx
         :param bucket:       Bucket where the measurements will be inserted

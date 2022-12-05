@@ -21,4 +21,19 @@ with sflux.Client(url='your_host', token='your_token', org='your_org') as client
 ```
 
 ### 2. Writing data
-The write methods are still being tested and will be fully supported soon.
+The writing of time series into the database is acheived by building measurement objects for each measurement to be
+ inserted:
+
+```python
+import time
+import sflux
+
+measurements = [
+    sflux.Measurement('measurement_name', field1='value1', field2='value2')
+        .tags(tag1='tag1', tag2='tag2')
+        .time(time.time())
+]
+with sflux.Client(url='your_host', token='your_token', org='your_org') as client:
+    client.write('your_bucket', measurements)
+
+```
