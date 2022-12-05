@@ -1,10 +1,8 @@
-import json
 import logging
 import datetime
 
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
-from influxdb_client.client.flux_table import TableList
 
 from sflux.utils import parse_to_string
 from sflux.measurement import Measurement
@@ -221,7 +219,7 @@ class _Query:
     #######################################
     # Execution methods
     #######################################
-    def all(self) -> TableList:
+    def all(self):
         """
         Returns the results of the query as a list of influx tables. Each table has records that contain the values.
 
