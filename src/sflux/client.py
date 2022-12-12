@@ -243,6 +243,18 @@ class _Query(_Experimental):
         components = ', '.join([f'{key}: {operations[key]}' for key in operations])
         return '|> map(fn: (r) => ({ %s %s }))' % (starter, components)
 
+    @add_to_query
+    def reduce(self, reductor: dict, identity: dict):
+        """
+        Implements the REDUCE function from FluxQL
+        :param reductor: Dictionary with the reduction operations. Each key is the name of the new column and each item
+                         is an operation or ROW objects and ACC (accumulator) objects.
+                         Example: {column: ROW('first') + ACC('second')}
+        :param identity: Dictionary of the initial values of the reductor. Example: {sum: 0.0}
+        """
+        components = ', '.join([f'{elem}: {reductor[elem]}' for elem in reductor])
+        return '|> reduce(fn: (r, accumulator) => ({ %s }), identity: %s)' % (components, identity)
+
     #######################################
     # Execution methods
     #######################################

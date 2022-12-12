@@ -64,6 +64,12 @@ class ROW:
         return _RowOp(f'{self} / {other}')
 
 
+class ACC(ROW):
+    """Represents an influx accumulator. TO be used in the `reduce` function"""
+    def __repr__(self):
+        return f'accumulator["{self.column}"]'
+
+
 class _RowOp(ROW):
     def __repr__(self):
         return self.column
