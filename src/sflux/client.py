@@ -73,15 +73,42 @@ def add_to_query(func):
             pass
         else:
             raise ValueError(f'Invalid query_addition type: {type(query_addition)}')
-        return _Query(client=self._client, components=self._components + query_addition)
+        return _Query(client=self._client, components=self._components + query_addition, imports=self._imports)
     return inner
 
 
-class _Query:
-    def __init__(self, client: InfluxDBClient, components: list):
+def add_import(import_name: str):
+    def decorator(func):
+        def inner(self, *args, **kwargs):
+            if import_name not in self._imports:
+                self._imports.append(import_name)
+            return func(self, *args, **kwargs)
+        return inner
+    return decorator
+
+
+class _Experimental:
+    """Implements some experimental features of Flux"""
+
+    @add_import('experimental')
+    @add_to_query
+    def unpivot(self, other_columns: (str, list, tuple) = ['_time']) -> str:
+        """
+        Implements the UNPIVOT function from FluxQL Experimental
+        :param other_columns: List of column names that are not in the group key but are also not field columns.
+                              Default is ["_time"]
+        """
+        if isinstance(other_columns, str):
+            other_columns = [other_columns]
+        return f'|> experimental.unpivot(otherColumns: {parse_to_string(other_columns)})'
+
+
+class _Query(_Experimental):
+    def __init__(self, client: InfluxDBClient, components: list, imports: list = None):
         """
         Represents an influx query that is being prepared and not yet sent
         """
+        self._imports = imports or []
         self._components = components
         self._client = client
 
@@ -219,6 +246,10 @@ class _Query:
     #######################################
     # Execution methods
     #######################################
+    def _generate_query_str(self):
+        final_components = [f'import "{import_name}"' for import_name in self._imports] + self._components
+        return '\n'.join(final_components)
+
     def all(self):
         """
         Returns the results of the query as a list of influx tables. Each table has records that contain the values.
@@ -228,13 +259,13 @@ class _Query:
                 for record in table.record:
                     print(record.values)
         """
-        return self._client.query_api().query('\n'.join(self._components))
+        return self._client.query_api().query(self._generate_query_str())
 
     def to_dataframe(self) -> "pd.DataFrame":
         """
         Returns the results of the query in a list of pandas dataframes
         """
-        return self._client.query_api().query_data_frame('\n'.join(self._components))
+        return self._client.query_api().query_data_frame(self._generate_query_str())
 
     def to_dict(self) -> list:
         """
