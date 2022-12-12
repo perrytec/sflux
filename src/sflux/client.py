@@ -170,11 +170,11 @@ class _Query:
         return f'|> limit(n: {n}, offset: {offset})'
 
     @add_to_query
-    def last(self) -> str:
+    def last(self, column: str = '_value') -> str:
         """
         Implements the LAST function from FluxQL
         """
-        return '|> last()'
+        return f'|> last(column: "{column}")'
 
     @add_to_query
     def drop(self, columns: list) -> str:
