@@ -232,6 +232,13 @@ class _Query(_Experimental):
         return f'|> count(column: "{column}")'
 
     @add_to_query
+    def fill(self, value, column: str = '_value', use_previous: bool = False):
+        """
+        Implements the FILL function from FluxQL
+        """
+        return f'|> fill(value: {value}, column: {column}, usePrevious: {str(use_previous).lower()})'
+
+    @add_to_query
     def map(self, operations: dict, keep_original: bool = True) -> str:
         """
         Implements the MAP function from FluxQL
