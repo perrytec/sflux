@@ -253,7 +253,8 @@ class _Query(_Experimental):
         :param identity: Dictionary of the initial values of the reductor. Example: {sum: 0.0}
         """
         components = ', '.join([f'{elem}: {reductor[elem]}' for elem in reductor])
-        return '|> reduce(fn: (r, accumulator) => ({ %s }), identity: %s)' % (components, identity)
+        identity_str = ', '.join([f'{elem}: {identity[elem]}' for elem in identity])
+        return '|> reduce(fn: (r, accumulator) => ({ %s }), identity: { %s })' % (components, identity_str)
 
     #######################################
     # Execution methods
