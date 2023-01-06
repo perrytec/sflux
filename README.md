@@ -37,3 +37,10 @@ with sflux.Client(url='your_host', token='your_token', org='your_org') as client
     client.write('your_bucket', measurements)
 
 ```
+
+### 3. Usage considerations
+This library is still under development and should be used with care. Please report any bugs as
+issues and they will be addressed promptly.
+
+For now Sflux does not implement string checks to avoid Injections. Please always verify any user
+input before passing it to Sflux. String checking will be implemented in future releases.
