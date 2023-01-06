@@ -36,7 +36,14 @@ class Measurement:
         return ",".join([f"{key}={self._tags[key]}" for key in self._tags])
 
     def _parse_fields(self):
-        return ",".join([f"{key}={self.fields[key]}" for key in self.fields])
+        return ",".join([f"{key}={self._parse_field_value(self.fields[key])}" for key in self.fields])
+
+    @staticmethod
+    def _parse_field_value(value):
+        """Parses the value of each independent field. Puts quotes around it if it is a string"""
+        if isinstance(value, str):
+            return f'"{value}"'
+        return value
 
     def _parse_time(self):
         """Parses time to nanoseconds"""
