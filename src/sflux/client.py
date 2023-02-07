@@ -48,13 +48,16 @@ class Client(InfluxDBClient):
         with self.write_api(**options) as write_api:
             write_api.write(bucket=bucket, org=self.org, record='\n'.join(str(elem) for elem in measurements))
 
-    def on_write_success(self, conf: (str, str, str), data: str):
+    @staticmethod
+    def on_write_success(conf: (str, str, str), data: str):
         pass
 
-    def on_write_error(self, conf: (str, str, str), data: str, exception: Exception):
-        pass
+    @staticmethod
+    def on_write_error(conf: (str, str, str), data: str, exception: Exception):
+        logger.warning(f'Failed to write data with exception: {exception}')
 
-    def on_write_retry(self, conf: (str, str, str), data: str, exception: Exception):
+    @staticmethod
+    def on_write_retry(conf: (str, str, str), data: str, exception: Exception):
         pass
 
     def check_health(self):
