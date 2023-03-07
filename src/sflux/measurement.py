@@ -36,7 +36,8 @@ class Measurement:
         return ",".join([f"{key}={self._tags[key]}" for key in self._tags])
 
     def _parse_fields(self):
-        return ",".join([f"{key}={self._parse_field_value(self.fields[key])}" for key in self.fields])
+        return ",".join([f"{key}={self._parse_field_value(self.fields[key])}"
+                         for key in self.fields if self.fields[key] is not None])
 
     @staticmethod
     def _parse_field_value(value):
