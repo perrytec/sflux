@@ -1,3 +1,6 @@
+import math
+
+
 class Measurement:
     def __init__(self, name: str, **fields):
         """
@@ -37,7 +40,23 @@ class Measurement:
 
     def _parse_fields(self):
         return ",".join([f"{key}={self._parse_field_value(self.fields[key])}"
-                         for key in self.fields if self.fields[key] is not None])
+                         for key in self.fields if self._field_is_valid(self.fields[key])])
+
+    @staticmethod
+    def _field_is_valid(value):
+        """
+        Checks if the value of the given field is valid. None, Inf and NaN are not valid in influx.
+        """
+        if value is None:
+            return False
+
+        if math.isinf(value):
+            return False
+
+        if math.isnan(value):
+            return False
+
+        return True
 
     @staticmethod
     def _parse_field_value(value):
