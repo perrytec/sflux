@@ -308,7 +308,7 @@ class _Query(_Experimental):
         if stop is None:
             stop = 'now()'
         elif isinstance(stop, float):
-            stop = int(stop)
+            stop = self._dt_to_rfc3339(datetime.datetime.fromtimestamp(stop))
         elif isinstance(stop, int) or isinstance(stop, str):
             pass
         elif isinstance(stop, datetime.datetime):
@@ -318,7 +318,7 @@ class _Query(_Experimental):
         if start is None:
             raise ValueError(f"Invalid start value. ")
         elif isinstance(start, float):
-            start = int(start)
+            start = self._dt_to_rfc3339(datetime.datetime.fromtimestamp(start))
         elif isinstance(start, int) or isinstance(start, str):
             pass
         elif isinstance(start, datetime.datetime):
@@ -327,27 +327,12 @@ class _Query(_Experimental):
             raise ValueError(f"_type {type(start)} not recognized. ")
         return start, stop
 
-    def _dt_to_rfc3339(self, datetime_obj: datetime.datetime = datetime.datetime.now(), _format: str = 'long'):
+    @staticmethod
+    def _dt_to_rfc3339(datetime_obj: datetime.datetime):
         """
         Transform datetime object into string RFC3339 format (either in date, short or long format). Ignores
-         timezone aware datetime objects.
-         """
-        if datetime_obj is not None:
-            base = datetime_obj.isoformat()
-            res = self._get_resolution(base)
-            base = base.split('+')[0] if '+' in base else base
-            if _format == 'date':
-                return base.split('T')[0]
-            elif _format == 'short':
-                return base[:-res-1] + 'Z' if res == 6 else base + 'Z'
-            elif _format == 'long':
-                return base[:-res//2] + 'Z' if res == 6 else base + '.000Z'
-            else:
-                raise ValueError("Enter a format from 1 to 3")
+        timezone aware datetime objects.
+        """
+        isoformatted = datetime_obj.isoformat()
 
-    @staticmethod
-    def _get_resolution(isoformat):
-        if len(isoformat.split('.')) == 1:
-            return -1
-        else:
-            return len(isoformat.split('.')[1])
+        return isoformatted.split('+')[0] + 'Z'
