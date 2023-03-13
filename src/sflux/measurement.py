@@ -50,11 +50,12 @@ class Measurement:
         if value is None:
             return False
 
-        if math.isinf(value):
-            return False
+        if isinstance(value, float):
+            if math.isinf(value):
+                return False
 
-        if math.isnan(value):
-            return False
+            if math.isnan(value):
+                return False
 
         return True
 
