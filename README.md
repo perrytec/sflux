@@ -14,7 +14,7 @@ import sflux
 with sflux.Client(url='your_host', token='your_token', org='your_org') as client:
     result = client.query(bucket='your_bucket')\
         .range(start='-1d')\
-        .filter(sflux.ROW('measurement') == 'your_measurement')\
+        .filter(sflux.ROW('_measurement') == 'your_measurement')\
         .pivot()\
         .filter(sflux.ROW('your_column') != 'something')\
         .to_dict()
