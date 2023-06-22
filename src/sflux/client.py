@@ -266,6 +266,19 @@ class _Query(_Experimental):
         identity_str = ', '.join([f'{elem}: {identity[elem]}' for elem in identity])
         return '|> reduce(fn: (r, accumulator) => ({ %s }), identity: { %s })' % (components, identity_str)
 
+    @add_to_query
+    def keep(self, columns: (list, str)):
+        """
+        Implements the KEEP function from FluxQL
+        :param columns: List of columns to keep or string reprecenting a regex of columns to keep
+        """
+        if isinstance(columns, list):
+            return f'|> keep(columns: {parse_to_string(columns)})'
+        elif isinstance(columns, str):
+            return f'|> keep(fn: (column) => column =~ {columns})'
+        else:
+            raise AttributeError(f'Columns attribute needs to be either a list or a string but received: {columns}')
+
     #######################################
     # Execution methods
     #######################################
