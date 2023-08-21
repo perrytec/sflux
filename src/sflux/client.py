@@ -279,6 +279,17 @@ class _Query(_Experimental):
         else:
             raise AttributeError(f'Columns attribute needs to be either a list or a string but received: {columns}')
 
+    @add_to_query
+    def aggregate_window(self, every: str = '1h', fn: str = 'last', create_empty: bool = False):
+        """
+        Implements the AGGREGATEWINDOW function from FluxQL
+        :param every: How frequently to do the downsampling
+        :param fn: Function to apply to each subset
+        :param create_empty: If to create empty for buckets without data
+        """
+        return f'|> aggregateWindow(every: {every}, fn: {fn}, createEmpty: {str(create_empty).lower()})'
+
+
     #######################################
     # Execution methods
     #######################################
