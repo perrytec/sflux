@@ -214,6 +214,13 @@ class _Query(_Experimental):
         return f'|> drop(columns: {parse_to_string(columns)})'
 
     @add_to_query
+    def keep(self, columns: list) -> str:
+        """
+        Implements the KEEP function from FluxQL
+        """
+        return f'|> keep(columns: {parse_to_string(columns)})'
+
+    @add_to_query
     def mean(self, column: str = '_value') -> str:
         """
         Implements the MEAN function from FluxQL
