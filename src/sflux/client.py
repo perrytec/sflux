@@ -221,6 +221,13 @@ class _Query(_Experimental):
         return f'|> keep(columns: {parse_to_string(columns)})'
 
     @add_to_query
+    def sum(self, column: str = '_value') -> str:
+        """
+        Implements the SUM function from FluxQL
+        """
+        return f'|> sum(column: "{column}")'
+
+    @add_to_query
     def mean(self, column: str = '_value') -> str:
         """
         Implements the MEAN function from FluxQL
