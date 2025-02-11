@@ -346,7 +346,7 @@ class _Query(_Experimental):
         if stop is None:
             stop = 'now()'
         elif isinstance(stop, float):
-            stop = self._dt_to_rfc3339(datetime.datetime.fromtimestamp(stop))
+            stop = self._dt_to_rfc3339(datetime.datetime.utcfromtimestamp(stop))
         elif isinstance(stop, int) or isinstance(stop, str):
             pass
         elif isinstance(stop, datetime.datetime):
@@ -356,7 +356,7 @@ class _Query(_Experimental):
         if start is None:
             raise ValueError(f"Invalid start value. ")
         elif isinstance(start, float):
-            start = self._dt_to_rfc3339(datetime.datetime.fromtimestamp(start))
+            start = self._dt_to_rfc3339(datetime.datetime.utcfromtimestamp(start))
         elif isinstance(start, int) or isinstance(start, str):
             pass
         elif isinstance(start, datetime.datetime):
