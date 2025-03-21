@@ -1,5 +1,6 @@
 import logging
 import datetime
+from typing import Callable
 
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -64,7 +65,7 @@ class Client(InfluxDBClient):
         return self.ping()
 
 
-def add_to_query(func):
+def add_to_query(func: Callable[..., str]) -> Callable[..., "_Query"]:
     """
     Decorator to return a new _Query object out of the original query
     """
@@ -205,6 +206,13 @@ class _Query(_Experimental):
         Implements the LAST function from FluxQL
         """
         return f'|> last(column: "{column}")'
+
+    @add_to_query
+    def first(self, column: str = '_value') -> str:
+        """
+        Implements the FIRST function from FluxQL
+        """
+        return f'|> first(column: "{column}")'
 
     @add_to_query
     def drop(self, columns: list) -> str:
