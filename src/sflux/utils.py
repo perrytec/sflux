@@ -3,8 +3,9 @@ import json
 
 class ROW:
     """"""
-    def __init__(self, column: str):
+    def __init__(self, column: str, identifier: str = 'r'):
         self.column = column
+        self.identifier = identifier
 
     def __eq__(self, other: str):
         return f'{self} == {parse_to_string(other)}'
@@ -34,8 +35,12 @@ class ROW:
         """Implements `exists` from FluxQL"""
         return f'exists {self}'
 
+    def matches(self, other: str):
+        """Implements regex matching"""
+        return f'{self} =~ {other}'
+
     def __repr__(self):
-        return f'r["{self.column}"]'
+        return f'{self.identifier}["{self.column}"]'
 
     # MATH
 
